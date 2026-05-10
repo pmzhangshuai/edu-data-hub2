@@ -1,4 +1,4 @@
-// 数据源类型
+// 数据源类型（中文）
 export type DataSourceType =
   | 'academic'
   | 'personnel'
@@ -7,12 +7,31 @@ export type DataSourceType =
   | 'employment'
   | 'financial'
   | 'asset'
-  | 'card'
   | 'other';
+
+// 数据源类型映射到中文
+export const DATA_SOURCE_TYPE_MAP: Record<DataSourceType, string> = {
+  academic: '教务系统',
+  personnel: '人事系统',
+  research: '科研系统',
+  student: '学工系统',
+  employment: '就业系统',
+  financial: '财务系统',
+  asset: '资产系统',
+  other: '其他'
+};
 
 export type DatabaseType = 'mysql' | 'oracle' | 'sqlserver' | 'postgresql';
 
-export type DataSourceStatus = 'active' | 'inactive' | 'error';
+// 数据库类型映射到中文
+export const DATABASE_TYPE_MAP: Record<DatabaseType, string> = {
+  mysql: 'MySQL',
+  oracle: 'Oracle',
+  sqlserver: 'SQLServer',
+  postgresql: 'PostgreSQL'
+};
+
+export type DataSourceStatus = 0 | 1 | '0' | '1';
 
 export interface DataSource {
   id: string;
@@ -25,8 +44,7 @@ export interface DataSource {
   username: string;
   status: DataSourceStatus;
   lastSyncTime?: string;
-  createdAt: string;
-  updatedAt: string;
+  createTime: string;
 }
 
 // 同步任务类型
