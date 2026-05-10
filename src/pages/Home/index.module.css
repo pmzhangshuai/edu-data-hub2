@@ -1,0 +1,66 @@
+.container {
+  padding: 24px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 32px;
+}
+
+.subtitle {
+  font-size: 16px;
+  max-width: 800px;
+}
+
+.statsRow {
+  margin-bottom: 24px;
+}
+
+.tasksCard {
+  height: 100%;
+}
+
+.qualityCard {
+  height: 100%;
+}
+
+.featuresSection {
+  margin-top: 48px;
+}
+
+.sectionTitle {
+  margin-bottom: 24px;
+}
+
+.featureCard {
+  height: 100%;
+  transition: all 0.3s ease;
+}
+
+.featureCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.featureIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: white;
+  margin-bottom: 16px;
+}
+
+.featureContent h5 {
+  margin-bottom: 8px !important;
+}
+
+.featureDetails {
+  margin-top: 8px !important;
+  margin-bottom: 0 !important;
+  font-size: 13px;
+}
