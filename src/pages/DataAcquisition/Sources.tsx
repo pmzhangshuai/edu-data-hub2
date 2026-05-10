@@ -9,7 +9,6 @@ import {
   Space,
   Popconfirm,
   message,
-  Modal,
   Tooltip,
   Empty,
   Pagination
@@ -32,6 +31,7 @@ import type {
 } from '@/types/api';
 import { DATA_SOURCE_TYPE_MAP, DATABASE_TYPE_MAP } from '@/types/api';
 import { mockDataSources } from '@/mocks/data';
+import DataSourceForm from './DataSourceForm';
 import styles from './Sources.module.css';
 
 const { Search } = Input;
@@ -52,6 +52,8 @@ const Sources: React.FC = () => {
     total: mockDataSources.length
   });
   const [testingId, setTestingId] = useState<string | null>(null);
+  const [formVisible, setFormVisible] = useState(false);
+  const [editData, setEditData] = useState<DataSource | undefined>();
 
   // 获取数据
   const fetchDataSources = async (
@@ -166,32 +168,21 @@ const Sources: React.FC = () => {
 
   // 编辑
   const handleEdit = (record: DataSource) => {
-    Modal.info({
-      title: '编辑数据源',
-      content: (
-        <div>
-          <p>数据源ID: {record.id}</p>
-          <p>数据源名称: {record.name}</p>
-          <p>主机: {record.host}:{record.port}</p>
-          <p style={{ color: '#6b7280' }}>
-            编辑功能将在后续版本中提供
-          </p>
-        </div>
-      )
-    });
+    setEditData(record);
+    setFormVisible(true);
   };
 
   // 新建
   const handleCreate = () => {
-    Modal.info({
-      title: '新增数据源',
-      content: (
-        <div>
-          <p>新增数据源功能将在后续版本中提供</p>
-          <p>支持MySQL/Oracle/SQLServer/PostgreSQL</p>
-        </div>
-      )
-    });
+    setEditData(undefined);
+    setFormVisible(true);
+  };
+
+  // 表单成功回调
+  const handleFormSuccess = () => {
+    setFormVisible(false);
+    setEditData(undefined);
+    fetchDataSources(pagination.current, pagination.pageSize);
   };
 
   // 表格列配置
@@ -469,6 +460,17 @@ const Sources: React.FC = () => {
           </div>
         )}
       </Card>
+      
+      {/* 数据源表单 */}
+      <DataSourceForm
+        visible={formVisible}
+        onCancel={() => {
+          setFormVisible(false);
+          setEditData(undefined);
+        }}
+        onSuccess={handleFormSuccess}
+        editData={editData}
+      />
     </div>
   );
 };
