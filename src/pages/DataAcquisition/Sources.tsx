@@ -1,171 +1,478 @@
-import React, { useEffect, useState } from 'react';
-import { Table, Tag, Space, Button, Input, Card, Row, Col, Statistic, Typography } from 'antd';
-import { PlusOutlined, SearchOutlined, ReloadOutlined } from '@ant-design/icons';
-import { get } from '@/api/client';
-import type { DataSource } from '@/types/api';
-import { DATA_SOURCE_TYPES, DATABASE_TYPES, DATA_SOURCE_STATUS } from '@/config/constants';
+import React, { useState, useEffect } from 'react';
+import {
+  Card,
+  Button,
+  Input,
+  Select,
+  Table,
+  Tag,
+  Space,
+  Popconfirm,
+  message,
+  Tooltip,
+  Empty,
+  Pagination
+} from 'antd';
+import {
+  PlusOutlined,
+  ReloadOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  DatabaseOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  ThunderboltOutlined
+} from '@ant-design/icons';
+import type {
+  DataSource,
+  DataSourceType,
+  DatabaseType,
+  DataSourceStatus
+} from '@/types/api';
+import { DATA_SOURCE_TYPE_MAP, DATABASE_TYPE_MAP } from '@/types/api';
+import { mockDataSources } from '@/mocks/data';
+import DataSourceForm from './DataSourceForm';
+import styles from './Sources.module.css';
 
-const { Title } = Typography;
+const { Search } = Input;
+const { Option } = Select;
 
-const DataSources: React.FC = () => {
-  const [loading, setLoading] = useState(true);
-  const [dataSources, setDataSources] = useState<DataSource[]>([]);
-  const [searchText, setSearchText] = useState('');
+const Sources: React.FC = () => {
+  const [loading, setLoading] = useState(false);
+  const [dataSources, setDataSources] = useState<DataSource[]>(mockDataSources);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [searchParams, setSearchParams] = useState({
+    name: '',
+    type: '',
+    status: ''
+  });
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: mockDataSources.length
+  });
+  const [testingId, setTestingId] = useState<string | null>(null);
+  const [formVisible, setFormVisible] = useState(false);
+  const [editData, setEditData] = useState<DataSource | undefined>();
 
-  useEffect(() => {
-    fetchDataSources();
-  }, []);
-
-  const fetchDataSources = async () => {
+  // 获取数据
+  const fetchDataSources = async (
+    page = 1,
+    pageSize = 10,
+    params = searchParams
+  ) => {
     try {
       setLoading(true);
-      const res = await get('/data-sources');
-      if (res.success) {
-        setDataSources(res.data.list);
+      
+      // 先使用 Mock 数据
+      let filteredData = [...mockDataSources];
+      
+      if (params.name) {
+        filteredData = filteredData.filter(item => item.name.includes(params.name));
       }
+      
+      if (params.type) {
+        filteredData = filteredData.filter(item => item.type === params.type);
+      }
+      
+      if (params.status) {
+        filteredData = filteredData.filter(item => String(item.status) === params.status);
+      }
+      
+      const startIndex = (page - 1) * pageSize;
+      const endIndex = startIndex + pageSize;
+      const paginatedData = filteredData.slice(startIndex, endIndex);
+      
+      setDataSources(paginatedData);
+      setPagination({
+        current: page,
+        pageSize,
+        total: filteredData.length
+      });
     } catch (error) {
-      console.error('Failed to fetch data sources:', error);
+      message.error('获取数据源列表失败');
     } finally {
       setLoading(false);
     }
   };
 
-  const getStatusColor = (status: string) => {
-    const colors: Record<string, string> = {
-      active: 'green',
-      inactive: 'default',
-      error: 'red',
-    };
-    return colors[status] || 'default';
+  useEffect(() => {
+    fetchDataSources();
+  }, []);
+
+  // 搜索处理
+  const handleSearch = (values: typeof searchParams) => {
+    setSearchParams(values);
+    fetchDataSources(1, pagination.pageSize, values);
   };
 
+  // 刷新
+  const handleRefresh = () => {
+    fetchDataSources(pagination.current, pagination.pageSize);
+  };
+
+  // 分页变化
+  const handlePageChange = (page: number, pageSize: number) => {
+    fetchDataSources(page, pageSize);
+  };
+
+  // 测试连接
+  const handleTestConnection = async (id: string) => {
+    try {
+      setTestingId(id);
+      // 模拟测试连接延迟
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      const latencyMs = Math.floor(Math.random() * 100 + 10);
+      message.success(
+        `连接成功！延迟 ${latencyMs}ms`
+      );
+    } catch (error) {
+      message.error('连接测试失败');
+    } finally {
+      setTestingId(null);
+    }
+  };
+
+  // 删除
+  const handleDelete = async (id: string) => {
+    try {
+      // 从 Mock 数据中删除
+      const index = mockDataSources.findIndex(ds => ds.id === id);
+      if (index !== -1) {
+        mockDataSources.splice(index, 1);
+      }
+      message.success('删除成功');
+      fetchDataSources(pagination.current, pagination.pageSize);
+    } catch (error) {
+      message.error('删除失败');
+    }
+  };
+
+  // 批量删除
+  const handleBatchDelete = async () => {
+    try {
+      // 从 Mock 数据中批量删除
+      selectedRowKeys.forEach(id => {
+        const index = mockDataSources.findIndex(ds => ds.id === id);
+        if (index !== -1) {
+          mockDataSources.splice(index, 1);
+        }
+      });
+      message.success('批量删除成功');
+      setSelectedRowKeys([]);
+      fetchDataSources(pagination.current, pagination.pageSize);
+    } catch (error) {
+      message.error('批量删除失败');
+    }
+  };
+
+  // 编辑
+  const handleEdit = (record: DataSource) => {
+    setEditData(record);
+    setFormVisible(true);
+  };
+
+  // 新建
+  const handleCreate = () => {
+    setEditData(undefined);
+    setFormVisible(true);
+  };
+
+  // 表单成功回调
+  const handleFormSuccess = () => {
+    setFormVisible(false);
+    setEditData(undefined);
+    fetchDataSources(pagination.current, pagination.pageSize);
+  };
+
+  // 表格列配置
   const columns = [
     {
       title: '数据源名称',
       dataIndex: 'name',
       key: 'name',
-      filterSearch: true,
-      onFilter: (value: any, record: any) =>
-        record.name.toLowerCase().includes(value.toLowerCase()),
+      width: 200,
+      render: (text: string) => (
+        <Space>
+          <DatabaseOutlined style={{ color: '#3b82f6' }} />
+          <span>{text}</span>
+        </Space>
+      )
     },
     {
-      title: '类型',
+      title: '数据源类型',
       dataIndex: 'type',
       key: 'type',
-      render: (type: keyof typeof DATA_SOURCE_TYPES) => DATA_SOURCE_TYPES[type] || type,
+      width: 140,
+      render: (type: DataSourceType) => (
+        <Tag color="blue">
+          {DATA_SOURCE_TYPE_MAP[type]}
+        </Tag>
+      )
     },
     {
       title: '数据库类型',
       dataIndex: 'dbType',
       key: 'dbType',
-      render: (dbType: keyof typeof DATABASE_TYPES) => DATABASE_TYPES[dbType] || dbType,
+      width: 140,
+      render: (dbType: DatabaseType) => (
+        <Tag color="cyan">
+          {DATABASE_TYPE_MAP[dbType]}
+        </Tag>
+      )
     },
     {
       title: '主机地址',
       dataIndex: 'host',
       key: 'host',
+      width: 160
+    },
+    {
+      title: '端口',
+      dataIndex: 'port',
+      key: 'port',
+      width: 80
+    },
+    {
+      title: '数据库名',
+      dataIndex: 'databaseName',
+      key: 'databaseName',
+      width: 140
     },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      render: (status: keyof typeof DATA_SOURCE_STATUS) => (
-        <Tag color={getStatusColor(status)}>{DATA_SOURCE_STATUS[status]}</Tag>
-      ),
+      width: 100,
+      render: (status: DataSourceStatus) => {
+        const isEnabled = Number(status) === 1;
+        return isEnabled ? (
+          <Tag color="success" icon={<CheckCircleOutlined />}>
+            启用
+          </Tag>
+        ) : (
+          <Tag color="default" icon={<CloseCircleOutlined />}>
+            禁用
+          </Tag>
+        );
+      }
     },
     {
-      title: '最后同步',
+      title: '最近同步时间',
       dataIndex: 'lastSyncTime',
       key: 'lastSyncTime',
+      width: 180,
+      render: (text: string) => (
+        <span style={{ color: '#6b7280', fontSize: '13px' }}>
+          {text || '从未同步'}
+        </span>
+      )
     },
     {
       title: '操作',
       key: 'action',
-      render: () => (
-        <Space size="small">
-          <Button type="link" size="small">
-            编辑
-          </Button>
-          <Button type="link" size="small">
-            测试
-          </Button>
-          <Button type="link" size="small" danger>
-            删除
-          </Button>
+      width: 220,
+      fixed: 'right' as const,
+      render: (_: any, record: DataSource) => (
+        <Space>
+          <Tooltip title="测试连接">
+            <Button
+              type="link"
+              size="small"
+              icon={<ThunderboltOutlined />}
+              loading={testingId === record.id}
+              onClick={() => handleTestConnection(record.id)}
+            >
+              测试
+            </Button>
+          </Tooltip>
+          <Tooltip title="编辑">
+            <Button
+              type="link"
+              size="small"
+              icon={<EditOutlined />}
+              onClick={() => handleEdit(record)}
+            >
+              编辑
+            </Button>
+          </Tooltip>
+          <Popconfirm
+            title="确定要删除这个数据源吗?"
+            description="此操作不可恢复，请谨慎操作"
+            onConfirm={() => handleDelete(record.id)}
+            okText="确定"
+            cancelText="取消"
+            okButtonProps={{ danger: true }}
+          >
+            <Button
+              type="link"
+              size="small"
+              danger
+              icon={<DeleteOutlined />}
+            >
+              删除
+            </Button>
+          </Popconfirm>
         </Space>
-      ),
-    },
+      )
+    }
   ];
 
-  const filteredDataSources = dataSources.filter((ds) =>
-    ds.name.toLowerCase().includes(searchText.toLowerCase())
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: setSelectedRowKeys
+  };
+
+  // 空状态内容
+  const emptyState = (
+    <Empty
+      image={Empty.PRESENTED_IMAGE_SIMPLE}
+      description="暂无数据源"
+    >
+      <Button
+        type="primary"
+        icon={<PlusOutlined />}
+        onClick={handleCreate}
+      >
+        新增数据源
+      </Button>
+    </Empty>
   );
 
   return (
-    <div style={{ padding: 24 }}>
-      <Title level={3}>数据源管理</Title>
+    <div className={styles.container}>
+      <Card>
+        {/* 页面标题 */}
+        <div className={styles.header}>
+          <div>
+            <h2 className={styles.title}>数据源管理</h2>
+            <p className={styles.subtitle}>配置与维护各业务系统的数据库连接</p>
+          </div>
+        </div>
 
-      <Row gutter={16} style={{ marginBottom: 24 }}>
-        <Col span={6}>
-          <Card>
-            <Statistic title="数据源总数" value={dataSources.length} />
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card>
-            <Statistic
-              title="活跃"
-              value={dataSources.filter((ds) => ds.status === 'active').length}
-              valueStyle={{ color: '#52c41a' }}
+        {/* 搜索和操作区 */}
+        <div className={styles.toolbar}>
+          <Space wrap>
+            <Search
+              placeholder="请输入数据源名称"
+              allowClear
+              style={{ width: 240 }}
+              onSearch={(value) =>
+                handleSearch({ ...searchParams, name: value })
+              }
             />
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card>
-            <Statistic
-              title="异常"
-              value={dataSources.filter((ds) => ds.status === 'error').length}
-              valueStyle={{ color: '#ff4d4f' }}
-            />
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card>
-            <Statistic title="未激活" value={dataSources.filter((ds) => ds.status === 'inactive').length} />
-          </Card>
-        </Col>
-      </Row>
-
-      <Card
-        title="数据源列表"
-        extra={
+            <Select
+              placeholder="选择数据源类型"
+              style={{ width: 160 }}
+              allowClear
+              onChange={(value) =>
+                handleSearch({ ...searchParams, type: value })
+              }
+            >
+              <Option value="academic">教务系统</Option>
+              <Option value="personnel">人事系统</Option>
+              <Option value="research">科研系统</Option>
+              <Option value="student">学工系统</Option>
+              <Option value="employment">就业系统</Option>
+              <Option value="financial">财务系统</Option>
+              <Option value="asset">资产系统</Option>
+              <Option value="other">其他</Option>
+            </Select>
+            <Select
+              placeholder="选择状态"
+              style={{ width: 140 }}
+              allowClear
+              onChange={(value) =>
+                handleSearch({ ...searchParams, status: value })
+              }
+            >
+              <Option value="1">启用</Option>
+              <Option value="0">禁用</Option>
+            </Select>
+          </Space>
           <Space>
-            <Input
-              placeholder="搜索数据源"
-              prefix={<SearchOutlined />}
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              style={{ width: 200 }}
-            />
-            <Button icon={<ReloadOutlined />} onClick={fetchDataSources}>
-              刷新
-            </Button>
-            <Button type="primary" icon={<PlusOutlined />}>
-              新建数据源
+            {selectedRowKeys.length > 0 && (
+              <Popconfirm
+                title={`确定要删除选中的 ${selectedRowKeys.length} 个数据源吗?`}
+                description="此操作不可恢复，请谨慎操作"
+                onConfirm={handleBatchDelete}
+                okText="确定"
+                cancelText="取消"
+                okButtonProps={{ danger: true }}
+              >
+                <Button
+                  danger
+                  icon={<DeleteOutlined />}
+                >
+                  批量删除 ({selectedRowKeys.length})
+                </Button>
+              </Popconfirm>
+            )}
+            <Tooltip title="刷新">
+              <Button
+                icon={<ReloadOutlined />}
+                onClick={handleRefresh}
+                loading={loading}
+              />
+            </Tooltip>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={handleCreate}
+            >
+              新增数据源
             </Button>
           </Space>
-        }
-      >
-        <Table
-          dataSource={filteredDataSources}
-          columns={columns}
-          rowKey="id"
-          loading={loading}
-          pagination={{ pageSize: 10 }}
-        />
+        </div>
+
+        {/* 表格 */}
+        <div className={styles.tableContainer}>
+          <Table
+            rowKey="id"
+            columns={columns}
+            dataSource={dataSources}
+            loading={loading}
+            scroll={{ x: 1300 }}
+            rowSelection={rowSelection}
+            pagination={false}
+            locale={{
+              emptyText: emptyState
+            }}
+          />
+        </div>
+
+        {/* 分页 */}
+        {dataSources.length > 0 && (
+          <div className={styles.pagination}>
+            <div style={{ color: '#6b7280', fontSize: '13px' }}>
+              共 {pagination.total} 条记录
+            </div>
+            <Pagination
+              current={pagination.current}
+              pageSize={pagination.pageSize}
+              total={pagination.total}
+              pageSizeOptions={['10', '20', '50']}
+              showSizeChanger
+              showQuickJumper
+              showTotal={(total) => `共 ${total} 条`}
+              onChange={handlePageChange}
+            />
+          </div>
+        )}
       </Card>
+      
+      {/* 数据源表单 */}
+      <DataSourceForm
+        visible={formVisible}
+        onCancel={() => {
+          setFormVisible(false);
+          setEditData(undefined);
+        }}
+        onSuccess={handleFormSuccess}
+        editData={editData}
+      />
     </div>
   );
 };
 
-export default DataSources;
+export default Sources;
