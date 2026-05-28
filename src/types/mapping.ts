@@ -1,3 +1,5 @@
+import type { DataSource } from './api';
+
 // 映射配置相关类型定义
 
 export interface TableField {

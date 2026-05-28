@@ -1,7 +1,0 @@
-import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { Typography, Card } from 'antd';
-const { Title, Text } = Typography;
-const Interfaces = () => (_jsxs("div", { style: { padding: 24 }, children: [_jsx(Title, { level: 3, children: "\u6807\u51C6\u63A5\u53E3" }), _jsx(Card, { children: _jsx(Text, { type: "secondary", children: "\u6807\u51C6\u63A5\u53E3\u670D\u52A1\uFF0C\u5305\u62EC\u6559\u80B2\u90E8\u6570\u636E\u4E0A\u62A5\u63A5\u53E3\u3001\u7701\u7EA7\u5E73\u53F0\u5BF9\u63A5\u63A5\u53E3\u7B49\u3002\u8BE5\u6A21\u5757\u6B63\u5728\u5F00\u53D1\u4E2D..." }) })] }));
-const Push = () => (_jsxs("div", { style: { padding: 24 }, children: [_jsx(Title, { level: 3, children: "\u6570\u636E\u63A8\u9001" }), _jsx(Card, { children: _jsx(Text, { type: "secondary", children: "\u6570\u636E\u5F00\u653E\u670D\u52A1\uFF0C\u4E3A\u7B2C\u4E09\u65B9\u5E94\u7528\u63D0\u4F9B\u53D7\u63A7\u7684\u6570\u636E\u67E5\u8BE2\u63A5\u53E3\u3002\u8BE5\u6A21\u5757\u6B63\u5728\u5F00\u53D1\u4E2D..." }) })] }));
-const Subscription = () => (_jsxs("div", { style: { padding: 24 }, children: [_jsx(Title, { level: 3, children: "\u8BA2\u9605\u7BA1\u7406" }), _jsx(Card, { children: _jsx(Text, { type: "secondary", children: "\u6570\u636E\u8BA2\u9605\u63A8\u9001\uFF0C\u6309\u8BA2\u9605\u89C4\u5219\u5B9A\u671F\u5411\u6307\u5B9A\u7CFB\u7EDF\u63A8\u9001\u6570\u636E\u53D8\u66F4\u3002\u8BE5\u6A21\u5757\u6B63\u5728\u5F00\u53D1\u4E2D..." }) })] }));
-export { Interfaces, Push, Subscription };

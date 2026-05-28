@@ -1,4 +1,4 @@
-import type { SourceTable, TargetTable } from '@/types/mapping';
+import type { SourceTable, TargetTable, TableField } from '@/types/mapping';
 
 // 教务系统数据源的Mock表数据
 export const mockAcademicTables: SourceTable[] = [

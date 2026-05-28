@@ -1,7 +1,0 @@
-import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { Typography, Card } from 'antd';
-const { Title, Text } = Typography;
-const Templates = () => (_jsxs("div", { style: { padding: 24 }, children: [_jsx(Title, { level: 3, children: "\u6A21\u677F\u7BA1\u7406" }), _jsx(Card, { children: _jsx(Text, { type: "secondary", children: "\u62A5\u544A\u6A21\u677F\u7BA1\u7406\uFF0C\u5305\u62EC\u56FD\u5BB6\u62A5\u544A\u6A21\u677F\u3001\u8BA4\u8BC1\u8BC4\u4F30\u6A21\u677F\u3001\u6821\u672C\u62A5\u544A\u6A21\u677F\u7B49\u3002\u8BE5\u6A21\u5757\u6B63\u5728\u5F00\u53D1\u4E2D..." }) })] }));
-const Generate = () => (_jsxs("div", { style: { padding: 24 }, children: [_jsx(Title, { level: 3, children: "\u62A5\u544A\u751F\u6210" }), _jsx(Card, { children: _jsx(Text, { type: "secondary", children: "\u667A\u80FD\u5185\u5BB9\u586B\u5145\uFF0C\u6570\u636E\u81EA\u52A8\u5D4C\u5165\u3001\u6587\u672C\u667A\u80FD\u751F\u6210\u3001\u4F50\u8BC1\u6750\u6599\u5173\u8054\u7B49\u529F\u80FD\u3002\u8BE5\u6A21\u5757\u6B63\u5728\u5F00\u53D1\u4E2D..." }) })] }));
-const Collaboration = () => (_jsxs("div", { style: { padding: 24 }, children: [_jsx(Title, { level: 3, children: "\u534F\u4F5C\u53D1\u5E03" }), _jsx(Card, { children: _jsx(Text, { type: "secondary", children: "\u591A\u4EBA\u534F\u4F5C\u7F16\u8F91\u3001\u591A\u7EA7\u5BA1\u6838\u6D41\u7A0B\u3001\u591A\u683C\u5F0F\u5BFC\u51FA\u7B49\u529F\u80FD\u3002\u8BE5\u6A21\u5757\u6B63\u5728\u5F00\u53D1\u4E2D..." }) })] }));
-export { Templates, Generate, Collaboration };
