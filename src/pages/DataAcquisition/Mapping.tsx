@@ -10,7 +10,6 @@ import {
   Form,
   Select,
   Button,
-  Modal,
   Drawer,
   message,
   Typography,
@@ -18,19 +17,17 @@ import {
   Empty,
   Collapse,
   Badge,
-  Tooltip,
   Radio,
   Alert
 } from 'antd';
 import {
   DatabaseOutlined,
-  ServerOutlined,
+  CloudServerOutlined,
   SearchOutlined,
   SaveOutlined,
   DeleteOutlined,
   SettingOutlined,
   EyeOutlined,
-  PlusOutlined,
   RightOutlined,
   ArrowRightOutlined
 } from '@ant-design/icons';
@@ -43,8 +40,6 @@ import type { DataSource } from '@/types/api';
 import type { 
   SourceTable, 
   TargetTable, 
-  TableField, 
-  TargetField, 
   FieldMapping, 
   MappingConfig,
   TransformRuleType 
@@ -53,7 +48,6 @@ import { DATA_SOURCE_TYPE_MAP, DATABASE_TYPE_MAP } from '@/types/api';
 
 const { Sider, Content } = Layout;
 const { Option } = Select;
-const { TabPane } = Tabs;
 const { Title, Text } = Typography;
 const { Panel } = Collapse;
 
@@ -85,7 +79,7 @@ const Mapping: React.FC = () => {
   const [form] = Form.useForm();
   
   // 数据源和表数据
-  const [dataSources, setDataSources] = useState<DataSource[]>(mockDataSources);
+  const [dataSources] = useState(mockDataSources);
   const [selectedDataSourceId, setSelectedDataSourceId] = useState<string | null>(null);
   const [sourceTables, setSourceTables] = useState<SourceTable[]>([]);
   const [expandedTables, setExpandedTables] = useState<string[]>([]);
@@ -95,7 +89,7 @@ const Mapping: React.FC = () => {
   const [dataSourceSearchText, setDataSourceSearchText] = useState('');
   
   // 映射配置
-  const [mappingConfig, setMappingConfig] = useState<MappingConfig | null>(null);
+  const [, setMappingConfig] = useState<MappingConfig | null>(null);
   const [activeTab, setActiveTab] = useState<string>('basic');
   const [ruleConfigVisible, setRuleConfigVisible] = useState(false);
   const [selectedMappingForEdit, setSelectedMappingForEdit] = useState<FieldMapping | null>(null);
@@ -145,7 +139,7 @@ const Mapping: React.FC = () => {
           key: ds.id,
           title: (
             <Space>
-              <ServerOutlined style={{ color: selectedDataSourceId === ds.id ? '#1890ff' : '' }} />
+              <CloudServerOutlined style={{ color: selectedDataSourceId === ds.id ? '#1890ff' : '' }} />
               <span style={{ fontWeight: selectedDataSourceId === ds.id ? 600 : 'normal' }}>
                 {ds.name}
               </span>
@@ -411,7 +405,7 @@ const Mapping: React.FC = () => {
                                   }}
                                 >
                                   <Space style={{ flex: 1 }}>
-                                    {field.isPrimaryKey && <Tag color="orange" size="small">PK</Tag>}
+                                    {field.isPrimaryKey && <Tag color="orange">PK</Tag>}
                                     <Text style={{ fontSize: 13, fontFamily: 'monospace' }}>
                                       {field.name}
                                     </Text>
@@ -561,7 +555,7 @@ const Mapping: React.FC = () => {
                               }}
                             >
                               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                {field.isPrimaryKey && <Tag color="orange" size="small">PK</Tag>}
+                                {field.isPrimaryKey && <Tag color="orange">PK</Tag>}
                                 <Text style={{ fontFamily: 'monospace', fontSize: 13 }}>
                                   {field.name}
                                 </Text>
@@ -629,7 +623,7 @@ const Mapping: React.FC = () => {
                                 }}
                               >
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                  {field.required && <Tag color="red" size="small">必填</Tag>}
+                                  {field.required && <Tag color="red">必填</Tag>}
                                   <Text style={{ fontFamily: 'monospace', fontSize: 13 }}>
                                     {field.name}
                                   </Text>
