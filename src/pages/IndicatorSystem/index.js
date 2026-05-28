@@ -1,0 +1,7 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { Typography, Card } from 'antd';
+const { Title, Text } = Typography;
+const Library = () => (_jsxs("div", { style: { padding: 24 }, children: [_jsx(Title, { level: 3, children: "\u6307\u6807\u5E93\u7BA1\u7406" }), _jsx(Card, { children: _jsx(Text, { type: "secondary", children: "\u6307\u6807\u5E93\u7BA1\u7406\u6A21\u5757\uFF0C\u5305\u62EC\u56FD\u5BB6\u6307\u6807\u6A21\u677F\u5E93\u3001\u6821\u672C\u6307\u6807\u6269\u5C55\u3001\u6307\u6807\u516C\u5F0F\u7F16\u8F91\u5668\u7B49\u529F\u80FD\u3002\u8BE5\u6A21\u5757\u6B63\u5728\u5F00\u53D1\u4E2D..." }) })] }));
+const Views = () => (_jsxs("div", { style: { padding: 24 }, children: [_jsx(Title, { level: 3, children: "\u591A\u7EF4\u89C6\u56FE" }), _jsx(Card, { children: _jsx(Text, { type: "secondary", children: "\u591A\u7EF4\u5EA6\u6307\u6807\u89C6\u56FE\uFF0C\u5305\u62EC\u76D1\u6D4B\u7EF4\u5EA6\u7BA1\u7406\u3001\u8D23\u4EFB\u90E8\u95E8\u7ED1\u5B9A\u3001\u9608\u503C\u4E0E\u9884\u8B66\u89C4\u5219\u7B49\u529F\u80FD\u3002\u8BE5\u6A21\u5757\u6B63\u5728\u5F00\u53D1\u4E2D..." }) })] }));
+const Dimensions = () => (_jsxs("div", { style: { padding: 24 }, children: [_jsx(Title, { level: 3, children: "\u76D1\u6D4B\u7EF4\u5EA6" }), _jsx(Card, { children: _jsx(Text, { type: "secondary", children: "\u76D1\u6D4B\u7EF4\u5EA6\u7BA1\u7406\uFF0C\u6309\"\u8F93\u5165-\u8FC7\u7A0B-\u8F93\u51FA-\u53CD\u9988\"\u8D28\u91CF\u5FAA\u73AF\u7EC4\u7EC7\u6307\u6807\u3002\u8BE5\u6A21\u5757\u6B63\u5728\u5F00\u53D1\u4E2D..." }) })] }));
+export { Library, Views, Dimensions };

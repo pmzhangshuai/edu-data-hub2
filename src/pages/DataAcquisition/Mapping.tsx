@@ -10,7 +10,6 @@ import {
   Form,
   Select,
   Button,
-  Modal,
   Drawer,
   message,
   Typography,
@@ -18,19 +17,17 @@ import {
   Empty,
   Collapse,
   Badge,
-  Tooltip,
   Radio,
   Alert
 } from 'antd';
 import {
   DatabaseOutlined,
-  ServerOutlined,
+  ApiOutlined,
   SearchOutlined,
   SaveOutlined,
   DeleteOutlined,
   SettingOutlined,
   EyeOutlined,
-  PlusOutlined,
   RightOutlined,
   ArrowRightOutlined
 } from '@ant-design/icons';
@@ -43,8 +40,6 @@ import type { DataSource } from '@/types/api';
 import type { 
   SourceTable, 
   TargetTable, 
-  TableField, 
-  TargetField, 
   FieldMapping, 
   MappingConfig,
   TransformRuleType 
@@ -53,7 +48,6 @@ import { DATA_SOURCE_TYPE_MAP, DATABASE_TYPE_MAP } from '@/types/api';
 
 const { Sider, Content } = Layout;
 const { Option } = Select;
-const { TabPane } = Tabs;
 const { Title, Text } = Typography;
 const { Panel } = Collapse;
 
@@ -85,7 +79,7 @@ const Mapping: React.FC = () => {
   const [form] = Form.useForm();
   
   // 数据源和表数据
-  const [dataSources, setDataSources] = useState<DataSource[]>(mockDataSources);
+  const [dataSources] = useState<DataSource[]>(mockDataSources);
   const [selectedDataSourceId, setSelectedDataSourceId] = useState<string | null>(null);
   const [sourceTables, setSourceTables] = useState<SourceTable[]>([]);
   const [expandedTables, setExpandedTables] = useState<string[]>([]);
@@ -95,7 +89,7 @@ const Mapping: React.FC = () => {
   const [dataSourceSearchText, setDataSourceSearchText] = useState('');
   
   // 映射配置
-  const [mappingConfig, setMappingConfig] = useState<MappingConfig | null>(null);
+  const [setMappingConfig] = useState<MappingConfig | null>(null);
   const [activeTab, setActiveTab] = useState<string>('basic');
   const [ruleConfigVisible, setRuleConfigVisible] = useState(false);
   const [selectedMappingForEdit, setSelectedMappingForEdit] = useState<FieldMapping | null>(null);
@@ -145,7 +139,7 @@ const Mapping: React.FC = () => {
           key: ds.id,
           title: (
             <Space>
-              <ServerOutlined style={{ color: selectedDataSourceId === ds.id ? '#1890ff' : '' }} />
+              <ApiOutlined style={{ color: selectedDataSourceId === ds.id ? '#1890ff' : '' }} />
               <span style={{ fontWeight: selectedDataSourceId === ds.id ? 600 : 'normal' }}>
                 {ds.name}
               </span>
@@ -401,30 +395,30 @@ const Mapping: React.FC = () => {
                           <Panel header="查看字段" key={table.name}>
                             <div style={{ maxHeight: 200, overflow: 'auto' }}>
                               {table.fields.map(field => (
-                                <div 
-                                  key={field.name}
-                                  style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    padding: '4px 0',
-                                    borderBottom: '1px solid #fafafa'
-                                  }}
-                                >
-                                  <Space style={{ flex: 1 }}>
-                                    {field.isPrimaryKey && <Tag color="orange" size="small">PK</Tag>}
-                                    <Text style={{ fontSize: 13, fontFamily: 'monospace' }}>
-                                      {field.name}
-                                    </Text>
-                                    <Text type="secondary" style={{ fontSize: 12 }}>
-                                      {field.type}
-                                    </Text>
-                                  </Space>
-                                  {field.comment && (
-                                    <Text type="secondary" style={{ fontSize: 12, marginLeft: 'auto' }}>
-                                      {field.comment}
-                                    </Text>
-                                  )}
-                                </div>
+                                <div
+                              key={field.name}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                padding: '4px 0',
+                                borderBottom: '1px solid #fafafa'
+                              }}
+                            >
+                              <Space style={{ flex: 1 }}>
+                                {field.isPrimaryKey && <Tag color="orange">PK</Tag>}
+                                <Text style={{ fontSize: 13, fontFamily: 'monospace' }}>
+                                  {field.name}
+                                </Text>
+                                <Text type="secondary" style={{ fontSize: 12 }}>
+                                  {field.type}
+                                </Text>
+                              </Space>
+                              {field.comment && (
+                                <Text type="secondary" style={{ fontSize: 12, marginLeft: 'auto' }}>
+                                  {field.comment}
+                                </Text>
+                              )}
+                            </div>
                               ))}
                             </div>
                           </Panel>
@@ -561,7 +555,7 @@ const Mapping: React.FC = () => {
                               }}
                             >
                               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                {field.isPrimaryKey && <Tag color="orange" size="small">PK</Tag>}
+                                {field.isPrimaryKey && <Tag color="orange">PK</Tag>}
                                 <Text style={{ fontFamily: 'monospace', fontSize: 13 }}>
                                   {field.name}
                                 </Text>
@@ -608,43 +602,43 @@ const Mapping: React.FC = () => {
                           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                             {selectedTargetTable.fields.map(field => (
                               <div
-                                key={field.name}
-                                onClick={() => {
-                                  setSelectedTargetFields(
-                                    selectedTargetFields.includes(field.name)
-                                      ? []
-                                      : [field.name]
-                                  );
-                                }}
-                                style={{
-                                  padding: '8px 12px',
-                                  borderRadius: 4,
-                                  cursor: 'pointer',
-                                  backgroundColor: selectedTargetFields.includes(field.name)
-                                    ? '#f6ffed'
-                                    : '#fff',
-                                  border: selectedTargetFields.includes(field.name)
-                                    ? '1px solid #b7eb8f'
-                                    : '1px solid #f0f0f0'
-                                }}
-                              >
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                  {field.required && <Tag color="red" size="small">必填</Tag>}
-                                  <Text style={{ fontFamily: 'monospace', fontSize: 13 }}>
-                                    {field.name}
-                                  </Text>
-                                </div>
-                                <div>
-                                  <Text type="secondary" style={{ fontSize: 12 }}>
-                                    {field.type}
-                                  </Text>
-                                  {field.comment && (
-                                    <Text type="secondary" style={{ fontSize: 12, marginLeft: 8 }}>
-                                      {field.comment}
-                                    </Text>
-                                  )}
-                                </div>
+                              key={field.name}
+                              onClick={() => {
+                                setSelectedTargetFields(
+                                  selectedTargetFields.includes(field.name)
+                                    ? []
+                                    : [field.name]
+                                );
+                              }}
+                              style={{
+                                padding: '8px 12px',
+                                borderRadius: 4,
+                                cursor: 'pointer',
+                                backgroundColor: selectedTargetFields.includes(field.name)
+                                  ? '#f6ffed'
+                                  : '#fff',
+                                border: selectedTargetFields.includes(field.name)
+                                  ? '1px solid #b7eb8f'
+                                  : '1px solid #f0f0f0'
+                              }}
+                            >
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                {field.required && <Tag color="red">必填</Tag>}
+                                <Text style={{ fontFamily: 'monospace', fontSize: 13 }}>
+                                  {field.name}
+                                </Text>
                               </div>
+                              <div>
+                                <Text type="secondary" style={{ fontSize: 12 }}>
+                                  {field.type}
+                                </Text>
+                                {field.comment && (
+                                  <Text type="secondary" style={{ fontSize: 12, marginLeft: 8 }}>
+                                    {field.comment}
+                                  </Text>
+                                )}
+                              </div>
+                            </div>
                             ))}
                           </div>
                         ) : (
