@@ -7,6 +7,7 @@ const Home = lazy(() => import('@/pages/Home'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
 const Sources = lazy(() => import('@/pages/DataAcquisition/Sources'));
+const Mapping = lazy(() => import('@/pages/DataAcquisition/Mapping'));
 
 const SimplePlaceholder: React.FC<{ title: string }> = ({ title }) => (
   <div style={{ padding: 24 }}>
@@ -32,7 +33,7 @@ const AppContent: React.FC = () => {
 
             <Route path="data-acquisition">
               <Route path="sources" element={<Sources />} />
-              <Route path="mapping" element={<SimplePlaceholder title="映射配置" />} />
+              <Route path="mapping" element={<Mapping />} />
               <Route path="tasks" element={<SimplePlaceholder title="同步任务" />} />
               <Route path="semi-auto" element={<SimplePlaceholder title="半自动化采集" />} />
               <Route path="manual" element={<SimplePlaceholder title="人工补录" />} />
